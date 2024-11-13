@@ -1,0 +1,64 @@
+CREATE DATABASE Company;
+USE Company;
+CREATE TABLE Department (
+DID INT PRIMARY KEY,
+dname VARCHAR(50) NOT NULL,
+MGRSSN CHAR(9),
+MGRstartdate DATE
+);
+CREATE TABLE Employeee (
+Name VARCHAR(50),
+SSN CHAR(9) PRIMARY KEY,
+Address VARCHAR(100),
+Salary INT,
+Department INT,
+FOREIGN KEY (Department) REFERENCES Department(DID)
+);
+INSERT INTO Department (DID, dname, MGRSSN, MGRstartdate) VALUES
+(1, 'Research', '123456789', '2020-01-15'),
+(2, 'Accounts', '987654321', '2019-03-20'),
+(3, 'IT', '456789123', '2021-07-10'),
+(4, 'HR', '789123456', '2018-05-25'),
+(5, 'Management', '321654987', '2017-11-30');
+INSERT INTO Employeee (Name, SSN, Address, Salary, Department) VALUES
+('Alice', '123456789', '123 Main St', 60000, 1),
+('Bob', '987654321', '456 Oak St', 75000, 2),
+('Charlie', '456789123', '789 Pine St', 80000, 3),
+('Diana', '789123456', '321 Maple St', 50000, 4),
+('Eve', '321654987', '654 Birch St', 95000, 5),
+('Frank', '654321987', '213 Cedar St', 62000, 1),
+('Grace', '321987654', '567 Elm St', 55000, 2),
+('Henry', '147258369', '789 Walnut St', 70000, 5);
+
+UPDATE Employeee
+SET Salary = Salary * 1.10
+WHERE Department = (SELECT DID FROM Department WHERE dname = 'Research');
+SELECT 
+SUM(Salary) AS TotalSalary,
+MAX(Salary) AS MaxSalary,
+MIN(Salary) AS MinSalary,
+AVG(Salary) AS AverageSalary
+FROM Employeee
+WHERE Department = (SELECT DID FROM Department WHERE dname = 'Accounts');
+SELECT Name
+FROM Employeee
+WHERE EXISTS (
+SELECT 1 
+FROM Department 
+WHERE DID = 5 AND Employeee.Department = Department.DID
+);
+SELECT Department.dname, COUNT(Employeee.SSN) AS EmployeeCount
+FROM Department
+JOIN Employeee ON Department.DID = Employeee.Department
+GROUP BY Department.dname
+HAVING COUNT(Employeee.SSN) >= 2;
+SELECT Name
+FROM Employeee
+WHERE DOB BETWEEN '1990-01-01' AND '1999-12-31';
+SELECT Name
+FROM Employeee
+WHERE DOB BETWEEN '1990-01-01' AND '1999-12-31';
+SELECT Employeee.Name, Department.dname
+FROM Employeee
+JOIN Department ON Employeee.Department = Department.DID;
+
